@@ -1,13 +1,11 @@
 var j = jQuery.noConflict();
 var defaultPagePath='app/pages/';
 var headerMsg = "Expenzing";
-var companyName = "utkarsh";
 //var urlPath = 'http://1.255.255.36:13130/TnEV1_0AWeb/WebService/Login/'
 //var WebServicePath ='http://1.255.255.184:8085/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath ='http://1.255.255.36:9898/NexstepWebService/mobileLinkResolver.service';
-//var WebServicePath ='http://1.255.255.143:8081/NexstepWebService/mobileLinkResolver.service';
-var WebServicePath = 'https://appservices.expenzing.com/NexstepWebService/mobileLinkResolver.service';
+var WebServicePath ='http://1.255.255.122:8082/NexstepWebService/mobileLinkResolver.service';
 var clickedFlagCar = false;
 var clickedFlagTicket = false;
 var clickedFlagHotel = false;
@@ -42,7 +40,6 @@ document.addEventListener("deviceready",loaded,false);
 
 function login()
    {
-   	alert("1");
    	if(document.getElementById("userName")!=null){
     var userName = document.getElementById("userName");
 	}else if(document.getElementById("userName")!=null){
@@ -54,21 +51,8 @@ function login()
     jsonToBeSend["user"] = userName.value;
     jsonToBeSend["pass"] = password.value;
 	//setUrlPathLocalStorage(urlPath);
-	var userName =  userName.value;
-//	var check = userName.includes(companyName);
-//	if(check)
-//	{
-//	 var dencc = "";
-// var tempJSON = JSON.stringify(jsonToBeSend);
- //   dencc = getEncryptionValue(tempJSON);
- //   jsonToBeSend = new Object();
- //   jsonToBeSend["dencc"] = dencc;
- //	}
- alert("2");
-	 urlPath=window.localStorage.getItem("urlPath");
-	 alert("urlPath "+urlPath);
+	urlPath=window.localStorage.getItem("urlPath");
 	j('#loading').show();
-	    alert("2nd json "+JSON.stringify(jsonToBeSend));
     j.ajax({
          url: urlPath+"LoginWebService",
          type: 'POST',
@@ -76,7 +60,6 @@ function login()
          crossDomain: true,
          data: JSON.stringify(jsonToBeSend),
          success: function(data) {
-         	alert("2 status "+data.Status);
          	if (data.Status == 'Success'){
                 
                 if(data.hasOwnProperty('multiLangInMobile') && data.multiLangInMobile != null &&
@@ -86,11 +69,6 @@ function login()
                     j('#mainHeader').load(headerBackBtn);
                     j('#mainContainer').load(pageRef); 
                        appPageHistory.push(pageRef);
-                       window.localStorage.setItem("UserName",userName);
-                    //if(check)
-                    //  window.localStorage.setItem("Password","dencc="+getEncryptionValue(password.value));
-                   // else
-                     window.localStorage.setItem("Password",password.value);
                     setUserStatusInLocalStorage("Valid");
 			        setUserSessionDetails(data,jsonToBeSend);
                     j('#loading').hide();         
@@ -101,12 +79,8 @@ function login()
              j('#mainContainer').load(pageRef);
               appPageHistory.push(pageRef);
 			  //addEmployeeDetails(data);
-              window.localStorage.setItem("UserName",userName);
-  				//if(check)
-                // window.localStorage.setItem("Password","dencc="+getEncryptionValue(password.value));
-               //  else
-                 window.localStorage.setItem("Password",password.value);
-                 setUserStatusInLocalStorage("Valid");
+                 
+			  setUserStatusInLocalStorage("Valid");
 			  setUserSessionDetails(data,jsonToBeSend);
                            
                 if(data.hasOwnProperty('EaInMobile') && 
@@ -154,19 +128,16 @@ function login()
 }
  
 function commanLogin(){
-	alert("commanLogin  1 ");
  	var userName = document.getElementById("userName");
  	var userNameValue = userName.value; 
  	var domainName = userNameValue.split('@')[1];
 	 var jsonToDomainNameSend = new Object();
 	jsonToDomainNameSend["userName"] = domainName;
-	//jsonToDomainNameSend["mobilePlatform"] = device.platform;
-	jsonToDomainNameSend["mobilePlatform"] = "Android";
+	jsonToDomainNameSend["mobilePlatform"] = device.platform;
+	//jsonToDomainNameSend["mobilePlatform"] = "Android";
 	jsonToDomainNameSend["appType"] = "NEXGEN_EXPENZING_TNE_APP";
   	//var res=JSON.stringify(jsonToDomainNameSend);
-  	alert("1st json "+JSON.stringify(jsonToDomainNameSend));
 	var requestPath = WebServicePath;
-	alert(requestPath);
 	j.ajax({
          url: requestPath,
          type: 'POST',
@@ -175,11 +146,9 @@ function commanLogin(){
          crossDomain: true,
          data: JSON.stringify(jsonToDomainNameSend),
 		 success: function(data) {
-		 	alert("1 status "+data.status);
          	if (data.status == 'Success'){
          		urlPath = data.message;
          		setUrlPathLocalStorage(urlPath);
-         		alert("-1");
          		login();
         	}else if(data.status == 'Failure'){
 				successMessage = data.message;
@@ -359,15 +328,6 @@ function saveBusinessExpDetails(jsonBEArr,busExpDetailsArr){
 	 jsonToSaveBE["ProcessStatus"] = "0";
 	 jsonToSaveBE["expenseDetails"] = jsonBEArr;
 	 requestRunning = true;
-	 var userName =window.localStorage.getItem("UserName");
-	 var check = userName.includes(companyName);
-	 if(check){
-	 var dencc = "";
-	 var tempJSON = JSON.stringify(jsonToSaveBE);
-     dencc = getEncryptionValue(tempJSON);
-     jsonToSaveBE = new Object();
-     jsonToSaveBE["dencc"] = dencc;
- 	 }
 	 var pageRefSuccess=defaultPagePath+'success.html';
      var pageRefFailure=defaultPagePath+'failure.html';
 	 j('#loading_Cat').show();
@@ -415,15 +375,6 @@ function saveTravelSettleExpDetails(jsonTSArr,tsExpDetailsArr){
 	 jsonToSaveTS["employeeId"] = window.localStorage.getItem("EmployeeId");
 	 jsonToSaveTS["expenseDetails"] = jsonTSArr;
 	 requestRunning = true;
-	 var userName =window.localStorage.getItem("UserName");
-	 var check = userName.includes(companyName);
-	 if(check){
-	 var dencc = "";
-	 var tempJSON = JSON.stringify(jsonToSaveTS);
-     dencc = getEncryptionValue(tempJSON);
-     jsonToSaveTS = new Object();
-     jsonToSaveTS["dencc"] = dencc;
- 	 }
      var pageRefSuccess=defaultPagePath+'success.html';
      var pageRefFailure=defaultPagePath+'failure.html';
 	j.ajax({
@@ -472,15 +423,7 @@ function sendForApprovalBusinessDetails(jsonBEArr,busExpDetailsArr,accountHeadID
 	 jsonToSaveBE["accountHeadId"]=accountHeadID;
 	 jsonToSaveBE["ProcessStatus"] = "1";
 	 jsonToSaveBE["title"]= window.localStorage.getItem("FirstName")+"/"+jsonToSaveBE["startDate"]+" to "+jsonToSaveBE["endDate"];
-	 var userName =window.localStorage.getItem("UserName");
-	 var check = userName.includes(companyName);
-	 if(check){
-	 var dencc = "";
-	 var tempJSON = JSON.stringify(jsonToSaveBE);
-     dencc = getEncryptionValue(tempJSON);
-     jsonToSaveBE = new Object();
-     jsonToSaveBE["dencc"] = dencc;
-     }
+	
      var pageRefSuccess=defaultPagePath+'success.html';
      var pageRefFailure=defaultPagePath+'failure.html';
 	 callSendForApprovalServiceForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure);
@@ -1045,17 +988,6 @@ function syncSubmitTravelDetails(){
 }
 
 function saveTravelRequestAjax(jsonToSaveTR){
-	var userName =window.localStorage.getItem("UserName");
-	var check = userName.includes(companyName);
-	var jsonToSaveTRTemp = new Object();
-
-	if(check){
-	 var dencc = "";
-	 var tempJSON = JSON.stringify(jsonToSaveTR);
-	 jsonToSaveTRTemp = jsonToSaveTR;
-     dencc = getEncryptionValue(tempJSON);
-     jsonToSaveTR["dencc"] = dencc;
-     }
 	 var pageRefSuccess=defaultPagePath+'success.html';
      var pageRefFailure=defaultPagePath+'failure.html';
     j('#loading_Cat').show();    
@@ -1068,11 +1000,8 @@ function saveTravelRequestAjax(jsonToSaveTR){
 			  success: function(data) {
 				  if(data.Status=="Failure"){
 					  if(data.hasOwnProperty('IsEntitlementExceed')){
-						if(check){
-							setTREntitlementExceedMessage(data,jsonToSaveTRTemp);
-						}else{
 							setTREntitlementExceedMessage(data,jsonToSaveTR);
-						}							 
+							 
 						}
 					  successMessage = data.Message;
                       //alert(window.lang.translate(successMessage));
@@ -1623,24 +1552,25 @@ function setDelayMessage(returnJsonData,jsonToBeSend,busExpDetailsArr){
 		}			
 }
 
-function setTREntitlementExceedMessage(returnJsonData, jsonToBeSend) {
-    var msg = returnJsonData.Message + ".\nThis voucher has exceeded Entitlements. Do you want to proceed?";
-    var IsEntitlementExceed = confirm(msg);
-    if (IsEntitlementExceed == true) {
-        onConfirm(IsEntitlementExceed, msg, jsonToBeSend);
-    } else {
-        return false;
-    }
-}
+function setTREntitlementExceedMessage(returnJsonData,jsonToBeSend){
+		var msg=returnJsonData.Message+".\nThis voucher has exceeded Entitlements. Do you want to proceed?";
+	navigator.notification.confirm(msg,
+		function(buttonIndex){
+            onConfirm(buttonIndex, msg,jsonToBeSend);
+        }, 
+		'confirm', 'Yes, No');
 
-function onConfirm(IsEntitlementExceed, errormsg, jsonToBeSend) {
-    if (IsEntitlementExceed == true) {
-        jsonToBeSend["EntitlementAllowCheck"] = true;
-        j('#loading_Cat').show();
-        saveTravelRequestAjax(jsonToBeSend);
-    } else {
+	
+	}
+
+function onConfirm(buttonIndex,errormsg,jsonToBeSend){
+    if (buttonIndex === 1){
+    	jsonToBeSend["EntitlementAllowCheck"]=true;
+         j('#loading_Cat').show();
+		saveTravelRequestAjax(jsonToBeSend);
+    }else{
         j('#loading_Cat').hide();
-        return false;
+    	return false;
     }
 
 }
@@ -1767,7 +1697,6 @@ function createTravelRequestNoDropDown(jsonTravelRequestNoArr){
 function oprationOnExpenseClaim(){
 	j(document).ready(function(){
         if(window.localStorage.getItem("EaInMobile") == "true"){
-
             	j('#send').on('click', function(e){ 
 				  expenseClaimDates=new Object;
 				  if(requestRunning){
@@ -1784,7 +1713,7 @@ alert(window.lang.translate('Tap and select Expenses to send for Approval with s
              }
 			});
         }else{  
-		       j('#send').on('click', function(e){
+		       j('#send').on('click', function(e){ 
 				var jsonExpenseDetailsArr = [];
 				  var busExpDetailsArr = [];
 				  expenseClaimDates=new Object;
@@ -2136,16 +2065,6 @@ function resetImageData(){
 		 var pageRef=defaultPagePath+'addToWallet.html';
 		 j('#loading_Cat').show();
 		 for(i; i<jsonWalletArr.length; i++ ){
-		 		var userName =window.localStorage.getItem("UserName");
-				var check = userName.includes(companyName);
-    		       if(check)
-					{
-				var dencc = "";
-				var tempJSON = JSON.stringify(jsonWalletArr[i]);
-   				dencc = getEncryptionValue(tempJSON);
-   				jsonWalletArr[i] = new Object();
-   				jsonWalletArr[i]["dencc"] = dencc;
- 					} 
 			 j.ajax({
 					  url: window.localStorage.getItem("urlPath")+"WalletReceiptsService",
 					  type: 'POST',
@@ -2249,15 +2168,6 @@ function validateValidMobileUser(){
 		&& (window.localStorage.getItem("UserStatus")==null || window.localStorage.getItem("UserStatus")=='Valid')){
 		jsonToBeSend["user"]=window.localStorage.getItem("UserName");
 		jsonToBeSend["pass"]=window.localStorage.getItem("Password");
-			var userName =window.localStorage.getItem("UserName");
-			var check = userName.includes(companyName);
-		if(check){
-		var dencc = "";
-	 	var tempJSON = JSON.stringify(jsonToBeSend);
-    	dencc = getEncryptionValue(tempJSON);
-    	jsonToBeSend = new Object();
-    	jsonToBeSend["dencc"] = dencc;
-    	}
 		j.ajax({
 	         url:  window.localStorage.getItem("urlPath")+"ValidateUserWebservice",
 	         type: 'POST',
@@ -2609,15 +2519,6 @@ function syncSubmitEmpAdvance(){
 
 
 function saveEmployeeAdvanceAjax(jsonToSaveEA){
-	var userName =window.localStorage.getItem("UserName");
-	var check = userName.includes(companyName);
-	if(check){
-	 var dencc = "";
-	 var tempJSON = JSON.stringify(jsonToSaveEA);
-     dencc = getEncryptionValue(tempJSON);
-     jsonToSaveEA = new Object();
-     jsonToSaveEA["dencc"] = dencc;
-        }
     var headerBackBtn=defaultPagePath+'backbtnPage.html';
      var pageRefSuccess=defaultPagePath+'success.html';
      var pageRefFailure=defaultPagePath+'failure.html';
@@ -2955,15 +2856,7 @@ function sendForApprovalBusinessDetailsWithEa(jsonBEArr,jsonEAArr,busExpDetailsA
 	 jsonToSaveBE["accountHeadId"]=accountHeadID;
 	 jsonToSaveBE["ProcessStatus"] = "1";
 	 jsonToSaveBE["title"]= window.localStorage.getItem("FirstName")+"/"+jsonToSaveBE["startDate"]+" to "+jsonToSaveBE["endDate"];
-	 	var userName =window.localStorage.getItem("UserName");
-	var check = userName.includes(companyName);
-	if(check){
-	 var dencc = "";
-	 var tempJSON = JSON.stringify(jsonToSaveBE);
-     dencc = getEncryptionValue(tempJSON);
-     jsonToSaveBE = new Object();
-     jsonToSaveBE["dencc"] = dencc;
- 	      }
+	
      var pageRefSuccess=defaultPagePath+'success.html';
      var pageRefFailure=defaultPagePath+'failure.html';
 	 callSendForApprovalServiceForBEwithEA(jsonToSaveBE,busExpDetailsArr,empAdvArr,pageRefSuccess,pageRefFailure);
@@ -3332,22 +3225,4 @@ function populateMainPage(){
          j('#loading').hide();
      }
 
-function getEncryptionValue(msg){
-	var key = "urlKey";
-		var encrypted = CryptoJS.AES.encrypt(msg,key);  
-		var ivHex = encrypted.iv.toString();
-		//alert("ivHex"+ivHex);
-	    var ivSize = encrypted.algorithm.ivSize; // same as the blockSize
-		//alert("ivSize"+ivSize);
-	    var keySize = encrypted.algorithm.keySize;
-		//alert("keySize"+keySize);
-	    var keyHex = encrypted.key.toString();
-		//alert("keyHex"+keyHex);
-	    var saltHex = encrypted.salt.toString(); // must be sent as well
-		//alert("saltHex"+saltHex);
-	    var openSslFormattedCipherTextString = encrypted.toString(); // not used
-	    var cipherTextHex = encrypted.ciphertext.toString(); // must be sent
-	    
-	   var dencc=ivHex+'_'+ivSize+'_'+keySize+'_'+keyHex+'_'+saltHex+'_'+openSslFormattedCipherTextString+'_'+cipherTextHex;
-	return dencc;
-}
+
